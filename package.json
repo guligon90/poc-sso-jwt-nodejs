@@ -14,8 +14,8 @@
     "lint": "eslint src --ext .js",
     "lint:fix": "eslint src --fix --ext .js",
     "prettier": "prettier --config .prettierrc 'src/**/*.js' --check",
-    "prettier:watch": "onchange 'src/**/*.js' -- prettier --write {{changed}}",
     "prettier:fix": "prettier --config .prettierrc 'src/**/*.js' --write",
+    "prettier:watch": "onchange 'src/**/*.js' -- prettier --config .prettierrc 'src/**/*.js' --write {{changed}}",
     "test": "jest",
     "test:dev": "jest --watchAll"
   }
