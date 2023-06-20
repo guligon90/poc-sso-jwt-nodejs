@@ -1,11 +1,21 @@
-# A simple implementation of single sign-on (SSO) central authorization unit and client in 500 lines of Node.js
+# poc-sso-jwt-nodejs
 
-### Important
+A simple implementation of single sign-on (SSO) central authorization unit and client in 500 lines of Node.js
+
+<!-- TOC -->
+
+- [poc-sso-jwt-nodejs](#poc-sso-jwt-nodejs)
+    - [Important](#important)
+    - [Introduction](#introduction)
+    - [Single Sign-On SSO](#single-sign-on-sso)
+
+<!-- /TOC -->
+## Important
 To Run these examples you need to add the below entry inside your `/etc/hosts` file in linux
 
 ```
-127.0.0.1   sso.ankuranand.com
-127.0.0.1   consumer.ankuranand.in
+127.0.0.1   sso.company.com
+127.0.0.1   consumer.one.company.com
 ```
 
 ## Introduction
@@ -25,7 +35,7 @@ People started using different technologies to build their services sometime uti
 
 And, we all started building a new login method to enable login for multi-system application groups. This is single sign-on.
 
-## Single Sign-On(SSO)
+## Single Sign-On (SSO)
 
 > The basic working principle on which SSO works is you can log in to a system in a multi-system application group and be authorized in all other systems without having to log in again, including single sign-on and single sign-off.
 
@@ -51,7 +61,7 @@ const isAuthenticated = (req, res, next) => {
   const redirectURL = `${req.protocol}://${req.headers.host}${req.path}`;
   if (req.session.user == null) {
     return res.redirect(
-      `http://sso.ankuranand.com:3010/simplesso/login?serviceURL=${redirectURL}`
+      `http://sso.company.com:3010/simplesso/login?serviceURL=${redirectURL}`
     );
   }
   next();
@@ -72,7 +82,7 @@ const login = (req, res, next) => {
   // direct access will give the error inside new URL.
   if (serviceURL != null) {
     const url = new URL(serviceURL);
-    if (alloweOrigin[url.origin] !== true) {
+    if (allowedOrigin[url.origin] !== true) {
       return res
         .status(400)
         .json({ message: "Your are not allowed to access the sso-server" });
@@ -99,9 +109,9 @@ const login = (req, res, next) => {
 We are checking if the serviceURL that has came as query to the ‘sso-server’ has been registered to use the sso-server’ or not.
 
 ```javascript
-    const alloweOrigin = {
-    "http://consumer.ankuranand.in:3020": true,
-    "http://consumertwo.ankuranand.in:3030": true,
+    const allowedOrigin = {
+    "http://consumer.one.company.com:3020": true,
+    "http://consumer.two.company.com:3030": true,
     "http://test.tangledvibes.com:3080": true,
     "http://blog.tangledvibes.com:3080": fasle,
     };
@@ -274,8 +284,3 @@ Similarly we can implement the “Logout”, just we need to consider these thre
 1. Local session exists, global session must exist.
 2. Global session exists, local session does not necessarily exist.
 3. Global session is destroyed, local session must be destroyed.
-
----
-
-### sso-server is our central authorization unit
-### sso-consumer is how different consumer can be implemented to talk with sso-server and use sso feature.
