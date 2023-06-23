@@ -5,12 +5,13 @@ A simple implementation of single sign-on (SSO) central authorization unit and c
 <!-- TOC -->
 
 - [poc-sso-jwt-nodejs](#poc-sso-jwt-nodejs)
-    - [Important](#important)
-    - [Introduction](#introduction)
-    - [Single Sign-On SSO](#single-sign-on-sso)
+  - [Important](#important)
+  - [Introduction](#introduction)
+  - [Single Sign-On (SSO)](#single-sign-on-sso)
 
 <!-- /TOC -->
 ## Important
+
 To Run these examples you need to add the below entry inside your `/etc/hosts` file in linux
 
 ```
@@ -38,6 +39,8 @@ And, we all started building a new login method to enable login for multi-system
 ## Single Sign-On (SSO)
 
 > The basic working principle on which SSO works is you can log in to a system in a multi-system application group and be authorized in all other systems without having to log in again, including single sign-on and single sign-off.
+
+![sso-global-session](./docs/img/sso-global-session.png)
 
 Going forward we are going to write the same for us, for learning perspective.
 
@@ -113,7 +116,7 @@ We are checking if the serviceURL that has came as query to the ‘sso-server’
     "http://consumer.one.company.com:3020": true,
     "http://consumer.two.company.com:3030": true,
     "http://test.tangledvibes.com:3080": true,
-    "http://blog.tangledvibes.com:3080": fasle,
+    "http://blog.tangledvibes.com:3080": false,
     };
 ```
 
@@ -121,7 +124,7 @@ We are checking if the serviceURL that has came as query to the ‘sso-server’
 
 ![login.ejs](https://cdn-images-1.medium.com/max/2000/1*OSPd8iGAa2I-oCN_dtZbtg.jpeg)
 
-**4.** The SSO authentication server verifies the user information and creates a session between the user and the sso authentication server. **This is called a global session and creates an authorization token. **The authorization token is a string of random characters. It doesn’t matter how it is generated. As long as it is not repeated and not easy to forge,
+**4.** The SSO authentication server verifies the user information and creates a session between the user and the sso authentication server. **This is called a global session and creates an authorization token.**The authorization token is a string of random characters. It doesn’t matter how it is generated. As long as it is not repeated and not easy to forge,
 
 **5.** The SSO authentication server takes the **authorization token** to jump to the initial request address (system “sso-consumer”).
 
@@ -151,8 +154,9 @@ const doLogin = (req, res, next) => {
 ```
 
 **Extra Security Pointers:**
-* Always consider this token as intermediate token and exchange the real data using this token.
-* If you are using JWT as the intermediate token please avoid sharing any critical data over this JWT.*
+
+- Always consider this token as intermediate token and exchange the real data using this token.
+- If you are using JWT as the intermediate token please avoid sharing any critical data over this JWT.*
 
 **6**. The ‘sso-consumer’ gets the token and goes to the ‘sso-server’ authentication to check if the token is valid.The ‘SSO-SERVER’ verifies the token and return another token with user information to the “sso-consumer”. The “sso-consumer” uses this token to create a session with the user. **This session is called local session.**
 
@@ -234,8 +238,9 @@ const verifySsoToken = async (req, res, next) => {
 ```
 
 **Extra Security Pointers:**
-* Inside “sso-server” register each application that’s going to use the sso-server for authentication and give them some sort of verification header while making a request. This establishes a better security between consumer and “sso-server”.
-* You can also generate different “private” and “public” rsa file for each application and let each application verify their JWT with their respective Public Key at the consumer side.*
+
+- Inside “sso-server” register each application that’s going to use the sso-server for authentication and give them some sort of verification header while making a request. This establishes a better security between consumer and “sso-server”.
+- You can also generate different “private” and “public” rsa file for each application and let each application verify their JWT with their respective Public Key at the consumer side.*
 
 You can also define application-level policy at the centralized place.
 
