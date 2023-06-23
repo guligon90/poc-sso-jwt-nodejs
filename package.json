@@ -1,5 +1,6 @@
 {
   "devDependencies": {
+    "@mermaid-js/mermaid-cli": "^10.2.2",
     "eslint": "^8.43.0",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-config-prettier": "^8.8.0",
@@ -17,6 +18,7 @@
     "prettier:fix": "prettier --config .prettierrc 'src/**/*.js' --write",
     "prettier:watch": "onchange 'src/**/*.js' -- prettier --config .prettierrc 'src/**/*.js' --write {{changed}}",
     "test": "jest",
-    "test:dev": "jest --watchAll"
+    "test:dev": "jest --watchAll",
+    "mermaid:cli": "mmdc"
   }
 }
