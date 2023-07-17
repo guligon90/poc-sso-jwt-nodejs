@@ -5,27 +5,36 @@ const ssoBaseApiEndpint = `${validReferOrigin}/sso`;
 const ssoServerJwtUrl = (ssoToken) =>
   `${ssoBaseApiEndpint}/verifytoken?ssoToken=${ssoToken}`;
 
-// Endpoint for redirecting the client app to the SSO service
+// Endpoint for login redirection the client app to the SSO service
 const ssoServerLoginUrl = (serviceUrl) =>
-  `${ssoBaseApiEndpint}/login?serviceURL=${serviceUrl}`;
+  `${ssoBaseApiEndpint}/signin?serviceURL=${serviceUrl}`;
+
+// Endpoint for logout redirection the client app to the SSO service
+const ssoServerLogoutUrl = (serviceUrl) =>
+  `${ssoBaseApiEndpint}/signout?serviceURL=${serviceUrl}`;
 
 // App token to validate the request is coming from the authenticated server only.
 const appTokenDB = {
-  sso_consumer: 'l1Q7zkOL59cRqWBkQ12ZiGVW2DBL',
-  simple_sso_consumer: '1g0jJwGmRQhJwvwNOrY4i90kD0m'
+  app_1: 'l1Q7zkOL59cRqWBkQ12ZiGVW2DBL',
+  app_2: '1g0jJwGmRQhJwvwNOrY4i90kD0m',
+  app_3: 'GmQqA78zKki3jnPQYDZQcgzB8X3',
+  app_4: 'RQXr2WwjooCD532GYEL9HAmzj7O',
 };
 
 // Map that determines if the corresponding service can access the SSO
 const allowedOrigin = {
-  'http://consumer.one.company.com:3020': true,
-  'http://consumer.two.company.com:3030': true,
-  'http://sso.company.com:3080': false
+  'http://app.one.company.com:3021': true,
+  'http://app.two.company.com:3022': true,
+  'http://app.three.company.com:3023': false,
+  'http://app.four.company.com:3024': true,
 };
 
 // Perform the mapping between the service name and origin URL
 const originAppName = {
-  'http://consumer.one.company.com:3020': 'sso_consumer',
-  'http://consumer.two.company.com:3030': 'simple_sso_consumer'
+  'http://app.one.company.com:3021': 'app_1',
+  'http://app.two.company.com:3022': 'app_2',
+  'http://app.three.company.com:3023': 'app_3',
+  'http://app.four.company.com:3024': 'app_4',
 };
 
 const definitions = {
@@ -34,7 +43,8 @@ const definitions = {
   originAppName,
   ssoServerJwtUrl,
   ssoServerLoginUrl,
-  validReferOrigin
+  ssoServerLogoutUrl,
+  validReferOrigin,
 };
 
 module.exports = definitions;
