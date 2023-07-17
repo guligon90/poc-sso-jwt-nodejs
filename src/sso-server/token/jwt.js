@@ -23,12 +23,17 @@ const generateJwt = (payload) =>
     );
   });
 
-const generatePayload = (ssoToken, intrmTokenCache, sessionUser, userDB) => {
-  const globalSessionToken = intrmTokenCache[ssoToken][0];
-  const appName = intrmTokenCache[ssoToken][1];
+const generatePayload = (ssoToken, ssoTokenCache, sessionUser, userDB) => {
+  const globalSessionToken = ssoTokenCache[ssoToken][0];
+  const appName = ssoTokenCache[ssoToken][1];
   const userEmail = sessionUser[globalSessionToken];
   const user = userDB[userEmail];
   const appPolicy = user.appPolicy[appName];
+
+  if (appPolicy === undefined) {
+    return;
+  }
+
   const email = appPolicy.shareEmail === true ? userEmail : undefined;
 
   const payload = {

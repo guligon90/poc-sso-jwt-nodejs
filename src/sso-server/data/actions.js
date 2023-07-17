@@ -1,30 +1,37 @@
-const { intrmTokenCache, sessionApp, sessionUser } = require('./dbs');
+const { render } = require('prettyjson');
+
+const { ssoTokenCache, sessionApp, sessionUser } = require('./dbs');
 const { originAppName } = require('../../common');
 
-const fillIntrmTokenCache = (origin, id, intrmToken) => {
-  intrmTokenCache[intrmToken] = [id, originAppName[origin]];
+const fillssoTokenCache = (origin, id, ssoToken) => {
+  ssoTokenCache[ssoToken] = [id, originAppName[origin]];
 
-  return intrmTokenCache;
+  return ssoTokenCache;
 };
 
-const storeApplicationInCache = (origin, id, intrmToken) => {
+const storeApplicationInCache = (origin, id, ssoToken) => {
   if (sessionApp[id] == null) {
     sessionApp[id] = {
       [originAppName[origin]]: true
     };
 
-    fillIntrmTokenCache(origin, id, intrmToken);
+    fillssoTokenCache(origin, id, ssoToken);
   } else {
     sessionApp[id][originAppName[origin]] = true;
 
-    fillIntrmTokenCache(origin, id, intrmToken);
+    fillssoTokenCache(origin, id, ssoToken);
   }
 
-  console.log({ ...sessionApp }, { ...sessionUser }, { intrmTokenCache });
+
+  console.log('sessionApp', render({...sessionApp}));
+  console.log('sessionUser', render({...sessionUser}));
+  console.log('ssoTokenCache', render({...ssoTokenCache}));
+
+  //console.log({ ...sessionApp }, { ...sessionUser }, { ssoTokenCache });
 };
 
 const actions = {
-  fillIntrmTokenCache,
+  fillssoTokenCache,
   storeApplicationInCache
 };
 

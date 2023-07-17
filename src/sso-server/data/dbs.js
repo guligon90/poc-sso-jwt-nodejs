@@ -1,28 +1,47 @@
-const uuidv4 = require('uuid/v4');
+const { v4: UUID } = require('uuid');
 const Hashids = require('hashids');
 
 const hashids = new Hashids();
 
-const deHyphenatedUUID = () => uuidv4().replace(/-/gi, '');
+const deHyphenatedUUID = () => UUID().replace(/-/gi, '');
 const encodedId = () => hashids.encodeHex(deHyphenatedUUID());
 
-// A temporary cache to store all the application that has login using the current session.
-// It can be useful for various audit purpose
 const sessionUser = {};
+
+// A temporary cache to store all the application
+// that has login using the current session.
+// It can be useful for various audit purposes
 const sessionApp = {};
 
-// these token are for the validation purpose
-const intrmTokenCache = {};
+// These SSO tokens are generated for validation purposes
+const ssoTokenCache = {};
 
 const userDB = {
-  'test@email.com': {
-    password: 'test',
+  'foo@email.com': {
+    password: 'foo',
     userId: encodedId(), // In case you don't want to share the user email.
     appPolicy: {
-      sso_consumer: { role: 'admin', shareEmail: true },
-      simple_sso_consumer: { role: 'user', shareEmail: false }
+      app_1: { role: 'admin', shareEmail: true },
+      app_4: { role: 'user', shareEmail: true },
     }
-  }
+  },
+  'bar@email.com': {
+    password: 'bar',
+    userId: encodedId(),
+    appPolicy: {
+      app_1: { role: 'supervisor', shareEmail: false },
+      app_2: { role: 'user', shareEmail: true },
+      app_3: { role: 'admin', shareEmail: true },
+    }
+  },
+  'foobar@email.com': {
+    password: 'foobar',
+    userId: encodedId(),
+    appPolicy: {
+      app_2: { role: 'supervisor', shareEmail: false },
+      app_4: { role: 'user', shareEmail: true },
+    }
+  },
 };
 
 const dbs = {
@@ -30,7 +49,7 @@ const dbs = {
   userDB,
   sessionApp,
   sessionUser,
-  intrmTokenCache
+  ssoTokenCache
 };
 
 module.exports = dbs;

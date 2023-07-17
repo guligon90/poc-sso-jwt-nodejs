@@ -1,6 +1,12 @@
-<% layout('boilerplate') -%>
-<h1>I am the <%= what %> </h1>
-<p>
-<a href="/sso/login">Login</a>
-<a href="/sso/login">Logout</a>
-</p>
+<!DOCTYPE html>
+<html lang="en">
+    <%- include ("./include/head") %>
+    <body>
+        <%- include ("./include/navbar") %>
+        <div class="container">
+            <h3><%= what %></h3>
+        </div>
+        <%- include ("./include/scripts") %>
+        <!-- <%- include ("./include/footer") %> -->
+    </body>
+</html>

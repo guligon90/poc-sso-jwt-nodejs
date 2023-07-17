@@ -1,10 +1,11 @@
 const express = require('express');
 
-const router = express.Router();
 const controller = require('../controller');
 
-router.route('/login').get(controller.login).post(controller.doLogin);
+const router = express.Router();
 
+router.route('/signin').get(controller.login).post(controller.doLogin);
+router.get('/sessions', controller.renderSessionsPage);
 router.get('/verifytoken', controller.verifySsoToken);
 
 module.exports = router;

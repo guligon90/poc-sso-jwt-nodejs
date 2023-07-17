@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+    <%- include ("./include/head") %>
+    <body>
+        <%- include ("./include/navbar") %>
+        <div class="container">
+            <div class="row">
+                <h2>Active sessions</h2>
+            </div>
+            <hr>
+            <div class="row">
+                <h3>Application</h3>
+            </div>
+            <div class="row">
+                <p><strong>Note:</strong> This session object is stored only in the context of the SSO application.</p>
+            </div>
+            <div class="row">
+                <table class="table table-inverse">
+                    <thead>
+                        <tr>
+                            <th>Session ID</th>
+                            <th>Applications</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% for (const [sessionId, apps] of Object.entries(appSessions)) { %>
+                            <tr>
+                                <td><%= sessionId %></td>
+                                <td><%= Object.keys(apps).join(',') %></td>
+                            </tr>
+                        <% } %>
+                    </tbody>
+                </table>
+            </div>
+            <div class="row">
+                <h3>User</h3>
+            </div>
+            <div class="row">
+                <p><strong>Note:</strong> This session object is stored in both client and SSO application contexts.</p>
+            </div>
+            <div class="row">
+                <table class="table table-inverse">
+                    <thead>
+                        <tr>
+                            <th>Session ID</th>
+                            <th>Username</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% for (const [sessionId, username] of Object.entries(userSessions)) { %>
+                            <tr>
+                                <td><%= sessionId %></td>
+                                <td><%= username %></td>
+                            </tr>
+                        <% } %>
+                    </tbody>
+                </table>
+            </div>
+            <div class="row">
+                <h3>SSO token cache</h3>
+            </div>
+            <div class="row">
+                <p><strong>Note:</strong> This session object is stored only in the context of the SSO application.</p>
+            </div>
+            <div class="row">
+                <table class="table table-inverse">
+                    <thead>
+                        <tr>
+                            <th>SSO Token</th>
+                            <th>Session ID</th>
+                            <th>Application</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% for (const [ssoToken, session] of Object.entries(ssoTokenCache)) { %>
+                            <tr>
+                                <td><%= ssoToken %></td>
+                                <td><%= session[0] %></td>
+                                <td><%= session[1] %></td>
+                            </tr>
+                        <% } %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <%- include ("./include/scripts") %>
+        <!-- <%- include ("./include/footer") %> -->
+    </body>
+</html>

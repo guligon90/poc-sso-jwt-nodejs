@@ -1,6 +1,6 @@
 const { generateJwt, generatePayload } = require('../token/jwt');
 const { fromAuthHeaderAsBearerToken } = require('../common');
-const { intrmTokenCache, sessionApp, sessionUser, userDB } = require('../data');
+const { ssoTokenCache, sessionApp, sessionUser, userDB } = require('../data');
 const { appTokenDB } = require('../../common');
 
 const appTokenFromRequest = fromAuthHeaderAsBearerToken();
@@ -12,16 +12,16 @@ const verifySsoToken = async (req, res, next) => {
   // if the application token is not present or ssoToken request is invalid
   // if the ssoToken is not present in the cache some is smart.
   if (
-    appToken == null ||
-    ssoToken == null ||
-    intrmTokenCache[ssoToken] == null
+    appToken == undefined ||
+    ssoToken == undefined ||
+    ssoTokenCache[ssoToken] == undefined
   ) {
     return res.status(400).json({ message: 'badRequest' });
   }
 
   // if the appToken is present and check if it's valid for the application
-  const appName = intrmTokenCache[ssoToken][1];
-  const globalSessionToken = intrmTokenCache[ssoToken][0];
+  const appName = ssoTokenCache[ssoToken][1];
+  const globalSessionToken = ssoTokenCache[ssoToken][0];
 
   // If the appToken is not equal to token given during the
   // sso app registraion or later stage than invalid
@@ -35,14 +35,19 @@ const verifySsoToken = async (req, res, next) => {
   // checking if the token passed has been generated
   const payload = generatePayload(
     ssoToken,
-    intrmTokenCache,
+    ssoTokenCache,
     sessionUser,
     userDB
   );
+
+  if (payload === undefined) {
+    return res.status(401).json({ message: 'The user does not have an access policy set up. Contact the sysadmin' });
+  }
+
   const token = await generateJwt(payload);
 
-  // delete the itremCache key for no futher use,
-  delete intrmTokenCache[ssoToken];
+  // delete the SSO cache key for no futher use.
+  delete ssoTokenCache[ssoToken];
 
   return res.status(200).json({ token });
 };

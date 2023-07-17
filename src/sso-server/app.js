@@ -1,8 +1,9 @@
 const express = require('express');
 const morgan = require('morgan');
-const engine = require('ejs-mate');
-const session = require('express-session');
+const path = require('path');
 const router = require('./router');
+const { render } = require('prettyjson');
+const session = require('express-session');
 
 const app = express();
 
@@ -21,7 +22,7 @@ app.use(
 );
 
 app.use((req, res, next) => {
-  console.log(req.session);
+  console.log('SSO service session', render({...req.session}));
   next();
 });
 
@@ -29,13 +30,23 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
 app.use(morgan('dev'));
-app.engine('ejs', engine);
-app.set('views', `${__dirname}/views`);
+
+// Set the default views directory to html folder
+app.set('views', path.join(__dirname, 'views'));
+
+// Set the folder for css & java scripts
+app.use(express.static(path.join(__dirname,'css')));
+app.use(express.static(path.join(__dirname, 'node_modules')));
+
+console.log(path.join(__dirname, 'node_modules'));
+
+// Set the view engine to ejs
 app.set('view engine', 'ejs');
 
 app.use('/sso', router);
 app.get('/', homeRendererMiddleware);
-app.use(notFoundExceptionMiddleware);
+
 app.use(exceptionMiddleware);
+app.use(notFoundExceptionMiddleware);
 
 module.exports = app;

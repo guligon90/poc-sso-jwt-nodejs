@@ -14,7 +14,7 @@ const doLogin = (req, res, next) => {
   const { email, password } = req.body;
 
   if (!(userDB[email] && password === userDB[email].password)) {
-    return res.status(404).json({ message: 'Invalid email and password' });
+    return res.status(400).json({ message: 'Invalid credentials' });
   }
 
   // else redirect
@@ -28,12 +28,12 @@ const doLogin = (req, res, next) => {
     return res.redirect('/');
   }
 
-  const url = new URL(serviceURL);
-  const intrmid = encodedId();
+  const origin = new URL(serviceURL).origin;
+  const ssoToken = encodedId();
 
-  storeApplicationInCache(url.origin, id, intrmid);
+  storeApplicationInCache(origin, id, ssoToken);
 
-  return res.redirect(`${serviceURL}?ssoToken=${intrmid}`);
+  return res.redirect(`${serviceURL}?ssoToken=${ssoToken}`);
 };
 
 const login = (req, res, next) => {
@@ -42,34 +42,35 @@ const login = (req, res, next) => {
   // This can also be used to verify the origin from where the request has came in
   // for the redirection
   const { serviceURL } = req.query;
-
+  const { user } = req.session;
+ 
   // direct access will give the error inside new URL.
-  if (serviceURL != null) {
-    const url = new URL(serviceURL);
+  if (serviceURL !== undefined) {
+    const origin = new URL(serviceURL).origin;
 
-    if (allowedOrigin[url.origin] !== true) {
+    if (allowedOrigin[origin] !== true) {
       return res
-        .status(400)
-        .json({ message: 'Your are not allowed to access the sso-server' });
+        .status(401)
+        .json({ message: `The origin ${origin} is not allowed to make request to the SSO service` });
+    }
+
+    if (user != undefined) {
+      const ssoToken = encodedId();
+
+      storeApplicationInCache(origin, user, ssoToken);
+
+      return res.redirect(`${serviceURL}?ssoToken=${ssoToken}`);
     }
   }
 
-  if (req.session.user != null && serviceURL == null) {
-    return res.redirect('/');
-  }
-
-  // if global session already has the user directly redirect with the token
-  if (req.session.user != null && serviceURL != null) {
-    const url = new URL(serviceURL);
-    const intrmToken = encodedId();
-
-    storeApplicationInCache(url.origin, req.session.user, intrmToken);
-
-    return res.redirect(`${serviceURL}?ssoToken=${intrmToken}`);
-  }
+  // if (user != undefined) {
+  //   return res.redirect('/');
+  // }
 
   return res.render('login', {
-    title: 'SSO-Server | Login'
+    title: 'SSO-Server | Login',
+    //externalRequest: serviceURL !== undefined,
+    externalRequest: serviceURL !== undefined,
   });
 };
 
