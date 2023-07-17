@@ -1,2 +1,45 @@
-<% layout('boilerplate') -%>
-<h1>I am the <%= what %> </h1>
+<!DOCTYPE html>
+<html lang="en">
+    <%- include ("./include/head") %>
+    <body>
+        <%- include ("./include/navbar") %>
+        <div class="container">
+            <div class="row">
+                <h2>Welcome!</h2>
+            </div>
+            <hr>
+            <div class="row">
+                <table class="table table-inverse">
+                    <thead>
+                        <tr>
+                            <th>Role</th>
+                            <th>E-mail</th>
+                            <th>UID</th>
+                            <th>Session ID</th>
+                            <th>Issued At</th>
+                            <th>Expiration Time</th>
+                            <th>Issuer</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% let email = what.email || 'PROTECTED'; %>
+                        <% let iat = new Date(what.iat).toISOString().slice(11,19) %>
+                        <% let expiresIn = new Date(what.exp).toISOString().slice(11,19) %>
+                        <tr>
+                            <td><%= what.role %></td>
+                            <td><%= email %></td>
+                            <td><%= what.uid %></td>
+                            <td><%= what.globalSessionID %></td>
+                            <td><%= iat %></td>
+                            <td><%= expiresIn %></td>
+                            <td><%= what.iss %></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <%- include ("./include/scripts") %>
+        <!-- <%- include ("./include/footer") %> -->
+    </body>
+</html>

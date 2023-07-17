@@ -31,7 +31,16 @@ const checkSSORedirect = () =>
         // global-session-id as the session ID so that
         // the logout can be implemented with the global session.
         req.session.user = decoded;
+        
       } catch (err) {
+        const { response } = err;
+
+        if (response !== undefined) {
+          const { data, status } = response;
+
+          return res.status(status).json(data)
+        }
+
         return next(err);
       }
 
