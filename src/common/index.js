@@ -1,7 +1,9 @@
 const definitions = require('./definitions');
+const parser = require('./arguments');
 
 const common = {
-  ...definitions
+  ...definitions,
+  ...parser,
 };
 
 module.exports = common;
